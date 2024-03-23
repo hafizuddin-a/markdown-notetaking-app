@@ -1,1 +1,2 @@
-# markdown-notetaking-app
+# Markdown Notetaking app
+Simple notetaking app that support some markdown functions
