@@ -44,6 +44,10 @@
     .preview-mode .editor {
       display: none;
     }
+    .placeholder {
+      color: #999;
+      pointer-events: none;
+    }
     @media (min-width: 768px) {
       .container {
         flex-direction: row;
@@ -59,8 +63,10 @@
 </head>
 <body>
   <div class="container">
-    <textarea class="editor" oninput="updatePreview()"></textarea>
-    <div class="preview markdown-body"></div>
+    <textarea class="editor" oninput="updatePreview()" placeholder="Edit"></textarea>
+    <div class="preview markdown-body">
+      <div class="placeholder">Preview</div>
+    </div>
   </div>
   <div class="button-container">
     <button onclick="toggleMode()">Toggle Mode</button>
@@ -84,6 +90,12 @@
       const markdown = editor.value;
       const html = md.render(markdown);
       preview.innerHTML = html;
+      const placeholder = preview.querySelector('.placeholder');
+      if (markdown.trim() !== '') {
+        placeholder.style.display = 'none';
+      } else {
+        placeholder.style.display = 'block';
+      }
     }
 
     function saveFile() {
