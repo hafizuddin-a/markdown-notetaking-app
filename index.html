@@ -67,7 +67,7 @@
 </head>
 <body>
   <div class="container">
-    <textarea class="editor" oninput="updatePreview()" placeholder="Edit"></textarea>
+    <textarea class="editor" oninput="updatePreview()" onpaste="handlePaste(event)" placeholder="Edit"></textarea>
     <div class="preview markdown-body">
       <div class="placeholder">Preview</div>
     </div>
@@ -92,6 +92,8 @@
       delimiters: 'dollars',
       katexOptions: { macros: { "\\RR": "\\mathbb{R}" } }
     });
+
+    const pastedImages = {};
 
     function updatePreview() {
       const markdown = editor.value;
@@ -129,6 +131,41 @@
     function toggleMode() {
       document.body.classList.toggle('preview-mode');
     }
+
+    function handlePaste(event) {
+      const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+      for (const item of items) {
+        if (item.kind === 'file' && item.type.startsWith('image/')) {
+          const blob = item.getAsFile();
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imageUrl = e.target.result;
+            const imageId = generateUniqueId();
+            pastedImages[imageId] = imageUrl;
+            const cursorPosition = editor.selectionStart;
+            const markdown = editor.value;
+            editor.value = markdown.slice(0, cursorPosition) + `![Pasted Image ${imageId}]()\n` + markdown.slice(cursorPosition);
+            editor.selectionStart = editor.selectionEnd = cursorPosition + `![Pasted Image ${imageId}]()`.length;
+            updatePreview();
+          };
+          reader.readAsDataURL(blob);
+        }
+      }
+    }
+
+    function generateUniqueId() {
+      return '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    md.renderer.rules.image = function(tokens, idx, options, env, self) {
+      const token = tokens[idx];
+      const altText = token.content;
+      const imageId = altText.match(/Pasted Image (.*)/)?.[1];
+      if (imageId && pastedImages[imageId]) {
+        token.attrSet('src', pastedImages[imageId]);
+      }
+      return self.renderToken(tokens, idx, options);
+    };
   </script>
 </body>
 </html>
