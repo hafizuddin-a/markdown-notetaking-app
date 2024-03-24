@@ -48,6 +48,10 @@
       color: #999;
       pointer-events: none;
     }
+    .guide-link {
+      margin-top: 10px;
+      text-align: center;
+    }
     @media (min-width: 768px) {
       .container {
         flex-direction: row;
@@ -72,6 +76,9 @@
     <button onclick="toggleMode()">Toggle Mode</button>
     <button onclick="saveFile()">Save as Markdown</button>
     <input type="file" accept=".md" onchange="openFile(event)">
+  </div>
+  <div class="guide-link">
+    <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown Guide</a>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@12.3.2/dist/markdown-it.min.js"></script>
