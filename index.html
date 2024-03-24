@@ -12,6 +12,7 @@
     }
     .container {
       display: flex;
+      flex-direction: column;
       height: calc(100vh - 80px);
     }
     .editor, .preview {
@@ -23,16 +24,36 @@
     .editor {
       resize: none;
       outline: none;
+      min-height: 200px;
+    }
+    .preview {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
     }
     .markdown-body {
       box-sizing: border-box;
       min-width: 200px;
-      max-width: 980px;
       margin: 0 auto;
       padding: 45px;
     }
     .button-container {
       margin-top: 10px;
+      text-align: center;
+    }
+    .preview-mode .editor {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .container {
+        flex-direction: row;
+      }
+      .editor, .preview {
+        flex: 1;
+      }
+      .preview-mode .container {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -42,6 +63,7 @@
     <div class="preview markdown-body"></div>
   </div>
   <div class="button-container">
+    <button onclick="toggleMode()">Toggle Mode</button>
     <button onclick="saveFile()">Save as Markdown</button>
     <input type="file" accept=".md" onchange="openFile(event)">
   </div>
@@ -83,6 +105,10 @@
         updatePreview();
       };
       reader.readAsText(file);
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle('preview-mode');
     }
   </script>
 </body>
